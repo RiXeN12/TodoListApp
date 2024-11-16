@@ -1,0 +1,24 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+}
+
+<div class="text-center mt-5">
+    <h1 class="display-4">Welcome to TodoListApp!</h1>
+    <p class="lead">Manage your tasks efficiently and effortlessly.</p>
+    @if (User.Identity.IsAuthenticated)
+    {
+        <p>
+            <a asp-controller="Todo" asp-action="Index" class="btn btn-success">Go to your Todos</a>
+            <form asp-controller="Account" asp-action="Logout" method="post" class="d-inline">
+                <button type="submit" class="btn btn-danger">Logout</button>
+            </form>
+        </p>
+    }
+    else
+    {
+        <p>
+            <a asp-controller="Account" asp-action="Login" class="btn btn-primary">Login</a>
+            <a asp-controller="Account" asp-action="Register" class="btn btn-secondary">Register</a>
+        </p>
+    }
+</div>

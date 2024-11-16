@@ -1,0 +1,73 @@
+﻿@{
+    ViewData["Title"] = "Головна";
+}
+
+<div class="container mt-5">
+    <div class="row align-items-center">
+        <div class="col-md-6">
+            <h1 class="display-4 mb-4">Організуйте ваші справи ефективно</h1>
+            <p class="lead mb-4">
+                Todo List допоможе вам організувати ваші справи, встановити пріоритети
+                та відслідковувати прогрес виконання завдань.
+            </p>
+            @if (Context.Session.GetInt32("UserId") == null)
+            {
+                <div class="d-grid gap-2 d-md-flex">
+                    <a asp-controller="Account" asp-action="Login"
+                       class="btn btn-outline-primary btn-lg">
+                        Увійти
+                    </a>
+                </div>
+            }
+            else
+            {
+                <div class="d-grid gap-2 d-md-flex">
+                    <a asp-controller="Task" asp-action="Index"
+                       class="btn btn-primary btn-lg">
+                        Перейти до справ
+                    </a>
+                </div>
+            }
+        </div>
+        <div class="col-md-6 text-center">
+            <img src="https://cdni.iconscout.com/illustration/premium/thumb/todo-list-illustration-download-in-svg-png-gif-file-formats--checklist-task-food-drink-illustrations-2371075.png" alt="Todo List"
+                 class="img-fluid" style="max-width: 400px;">
+        </div>
+    </div>
+
+    <div class="row mt-5 pt-5">
+        <div class="col-md-4 mb-4">
+            <div class="card h-100 border-0 shadow-sm">
+                <div class="card-body text-center">
+                    <i class="bi bi-list-check display-4 text-primary mb-3"></i>
+                    <h3 class="card-title h4">Організація</h3>
+                    <p class="card-text">
+                        Створюйте списки справ та категоризуйте їх за важливістю та типом
+                    </p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-4">
+            <div class="card h-100 border-0 shadow-sm">
+                <div class="card-body text-center">
+                    <i class="bi bi-clock-history display-4 text-primary mb-3"></i>
+                    <h3 class="card-title h4">Відстеження</h3>
+                    <p class="card-text">
+                        Встановлюйте терміни та відслідковуйте прогрес виконання
+                    </p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-4">
+            <div class="card h-100 border-0 shadow-sm">
+                <div class="card-body text-center">
+                    <i class="bi bi-graph-up display-4 text-primary mb-3"></i>
+                    <h3 class="card-title h4">Аналітика</h3>
+                    <p class="card-text">
+                        Аналізуйте свою продуктивність та покращуйте результати
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,189 @@
+﻿@model TaskListViewModel
+@{
+    ViewData["Title"] = "Мої завдання";
+}
+
+<div class="container mt-4">
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <form method="get" asp-action="Index" class="row g-3">
+                        <div class="col-md-3">
+                            <label class="form-label">Категорія</label>
+                            <div class="input-group">
+                                <select name="category" class="form-select" onchange="this.form.submit()">
+                                    <option value="">Всі категорії</option>
+                                    @foreach (var category in Model.Categories)
+                                    {
+                                        <option value="@category" selected="@(category == Model.CurrentCategory)">
+                                            @category
+                                        </option>
+                                    }
+                                </select>
+                                @if (!string.IsNullOrEmpty(Model.CurrentCategory))
+                                {
+                                    <a href="@Url.Action("Index", new { status = Model.CurrentStatus, priority = Model.CurrentPriority, dueDate = Model.CurrentDueDate, sortOrder = Model.CurrentSortOrder })"
+                                       class="btn btn-outline-secondary">
+                                        <i class="bi bi-x"></i>
+                                    </a>
+                                }
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <label class="form-label">Статус</label>
+                            <select name="status" class="form-select" onchange="this.form.submit()">
+                                <option value="">Всі статуси</option>
+                                <option value="pending" selected="@(Model.CurrentStatus == "pending")">Невиконані</option>
+                                <option value="completed" selected="@(Model.CurrentStatus == "completed")">Виконані</option>
+                            </select>
+                        </div>
+                        <div class="col-md-2">
+                            <label class="form-label">Пріоритет</label>
+                            <select name="priority" class="form-select" onchange="this.form.submit()">
+                                <option value="">Всі пріоритети</option>
+                                <option value="1" selected="@(Model.CurrentPriority == "1")">Низький</option>
+                                <option value="2" selected="@(Model.CurrentPriority == "2")">Середній</option>
+                                <option value="3" selected="@(Model.CurrentPriority == "3")">Високий</option>
+                            </select>
+                        </div>
+                        <div class="col-md-2">
+                            <label class="form-label">Термін виконання</label>
+                            <div class="input-group">
+                                <input type="date" name="dueDate" class="form-control"
+                                       value="@(Model.CurrentDueDate?.ToString("yyyy-MM-dd"))"
+                                       onchange="this.form.submit()">
+                                @if (Model.CurrentDueDate.HasValue)
+                                {
+                                    <a href="@Url.Action("Index", new { category = Model.CurrentCategory, status = Model.CurrentStatus, priority = Model.CurrentPriority, sortOrder = Model.CurrentSortOrder })"
+                                       class="btn btn-outline-secondary">
+                                        <i class="bi bi-x"></i>
+                                    </a>
+                                }
+                            </div>
+                        </div>
+
+                        @* <!-- Сортування -->
+                        <div class="col-md-3">
+                            <label class="form-label">Сортування</label>
+                            <select name="sortOrder" class="form-select" onchange="this.form.submit()">
+                                <option value="">За замовчуванням</option>
+                                <option value="priority_desc" selected="@(Model.CurrentSortOrder == "priority_desc")">
+                                    За пріоритетом (спочатку важливі)
+                                </option>
+                                <option value="priority_asc" selected="@(Model.CurrentSortOrder == "priority_asc")">
+                                    За пріоритетом (спочатку неважливі)
+                                </option>
+                                <option value="due_date_desc" selected="@(Model.CurrentSortOrder == "due_date_desc")">
+                                    За терміном (спочатку пізніші)
+                                </option>
+                                <option value="due_date_asc" selected="@(Model.CurrentSortOrder == "due_date_asc")">
+                                    За терміном (спочатку ранні)
+                                </option>
+                            </select>
+                        </div> *@
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h2 class="mb-0">Мої завдання</h2>
+                    @if (Model.Tasks.Any())
+                    {
+                        <small class="text-muted">Показано @Model.Tasks.Count() завдань</small>
+                    }
+                </div>
+                <div class="d-flex gap-2">
+                    @if (Model.HasAnyFilters())
+                    {
+                        <a href="@Url.Action("Index")" class="btn btn-outline-secondary">
+                            <i class="bi bi-arrow-counterclockwise"></i> Скинути фільтри
+                        </a>
+                    }
+                    <a asp-action="Create" class="btn btn-primary">
+                        <i class="bi bi-plus-circle"></i> Нове завдання
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @if (!Model.Tasks.Any())
+    {
+        <div class="row">
+            <div class="col-md-12">
+                <div class="alert alert-info">
+                    <i class="bi bi-info-circle"></i> Завдань не знайдено.
+                    @if (Model.HasAnyFilters())
+                    {
+                        <span>Спробуйте змінити параметри фільтрації або <a href="@Url.Action("Index")">скиньте всі фільтри</a>.</span>
+                    }
+                    else
+                    {
+                        <span>Створіть нове завдання, натиснувши кнопку "Нове завдання".</span>
+                    }
+                </div>
+            </div>
+        </div>
+    }
+
+    <div class="row">
+        @foreach (var priority in new[] { 3, 2, 1 })
+        {
+            var tasksInPriority = Model.Tasks.Where(t => t.Priority == priority).OrderBy(t => t.DueDate);
+            if (tasksInPriority.Any())
+            {
+                <div class="col-md-4 mb-4">
+                    <div class="card shadow-sm">
+                        <div class="card-header @(priority == 3 ? "bg-danger" : priority == 2 ? "bg-warning" : "bg-success")
+                             @(priority == 2 ? "text-dark" : "text-white")">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <h5 class="mb-0">
+                                    @(priority == 3 ? "Високий" : priority == 2 ? "Середній" : "Низький") пріоритет
+                                </h5>
+                                <span class="badge bg-white @(priority == 2 ? "text-dark" : "text-dark")">
+                                    @tasksInPriority.Count()
+                                </span>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            @foreach (var item in tasksInPriority)
+                            {
+                                <partial name="_TaskCard" model="item" />
+                            }
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        document.querySelectorAll('.task-complete-checkbox').forEach(checkbox => {
+            checkbox.addEventListener('change', function () {
+                const taskId = this.dataset.taskId;
+                const isCompleted = this.checked;
+
+                fetch(`/Task/ToggleComplete/${taskId}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ isCompleted })
+                }).then(response => {
+                    if (response.ok) {
+                        showNotification('Статус завдання оновлено');
+                        setTimeout(() => window.location.reload(), 1000);
+                    }
+                });
+            });
+        });
+    </script>
+}

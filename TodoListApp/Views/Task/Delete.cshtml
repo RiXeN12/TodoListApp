@@ -1,0 +1,38 @@
+﻿@model TaskItem
+
+@{
+    ViewData["Title"] = "Видалення завдання";
+}
+
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card border-danger">
+                <div class="card-header bg-danger text-white">
+                    <h3 class="mb-0">Підтвердження видалення</h3>
+                </div>
+                <div class="card-body">
+                    <h5 class="card-title">Ви впевнені, що хочете видалити це завдання?</h5>
+                    <p class="card-text">
+                        <strong>Назва:</strong> @Model.Title<br />
+                        <strong>Опис:</strong> @Model.Description<br />
+                        @if (Model.DueDate.HasValue)
+                        {
+                            <strong>Термін виконання:</strong> @Model.DueDate.Value.ToShortDateString()
+
+                            <br />
+                        }
+                    </p>
+
+                    <form asp-action="Delete" method="post">
+                        <input type="hidden" asp-for="Id" />
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                            <a asp-action="Index" class="btn btn-outline-secondary me-2">Скасувати</a>
+                            <button type="submit" class="btn btn-danger">Видалити</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
